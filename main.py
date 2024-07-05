@@ -1,9 +1,9 @@
 import streamlit as st
 import signup, home
 
-st.set_page_config(
-    page_title="Skin",
-)
+# st.set_page_config(
+#     page_title="Skin",
+# )
 
 class MultiApp:
     def __init__(self):
@@ -25,8 +25,9 @@ class MultiApp:
                     application['function']()
 
 app = MultiApp()
-app.add_app("Signup", signup.app)
 app.add_app("Home", home.app)
+app.add_app("Signup", signup.app)
+
 app.run()
 # streamlit run main.py
 #https://www.kaggle.com/datasets/hasinisadunikasilva/skincancerdetectiondcnn/data
