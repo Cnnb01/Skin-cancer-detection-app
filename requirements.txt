@@ -3,3 +3,10 @@ pip install opencv-python-headless
 pip install torch (if this times out, try..)
 pip install torch==2.0.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
+python -m venv myenv
+myenv\Scripts\activate
+pip install streamlit
+pip install opencv-python-headless
+pip install tensorflow
+pip install firebase-admin
+

@@ -1,8 +1,8 @@
-import streamlit as st
-from PIL import Image
 import cv2
+import streamlit as st
 import numpy as np
-from predict import predict_image
+from PIL import Image
+from predict import predict_image  # Ensure this module is accessible
 import time
 
 def add_custom_css():
@@ -88,40 +88,105 @@ def app():
         if uploaded_image is not None:
             image = Image.open(uploaded_image)
             st.image(image, caption="Uploaded Image", use_column_width=True)
-            st.write("Classifying...")
-            with st.spinner('Processing...'):
-                time.sleep(2)  # Simulate a delay for processing
-                result = predict_image(image)
-                st.write(f"Result: {result}")
+            if st.button('Classify Image', key="classify_image"):
+                st.write("Classifying...")
+                with st.spinner('Processing...'):
+                    time.sleep(2)  # Simulate a delay for processing
+                    result, probability = predict_image(image)
+                    st.write(f"Result: {result}")
+                    st.write(f"Probability: {probability:.2f}")
+
+                    # Generate and display detailed report
+                    st.subheader("Detailed Analysis Report:")
+                    if result == "Malignant":
+                        st.write("The lesion shows signs of malignancy. Please consult a dermatologist.")
+                        st.write("Probability of malignancy: {:.2f}".format(probability))
+                    else:
+                        st.write("The lesion appears benign. Regular monitoring is recommended.")
+                        st.write("Probability of malignancy: {:.2f}".format(probability))
         st.markdown("</div>", unsafe_allow_html=True)
 
     with col2:
         st.markdown("<div class='content'>", unsafe_allow_html=True)
         st.header("Real-Time Scanning", anchor=None)
         st.write("This functionality is under development.")
-        if st.button("Start Camera"):
-            capture_image()
+        if st.button("Start Camera", key="start_camera"):
+            st.session_state["camera_running"] = True
+        if st.session_state.get("camera_running", False):
+            display_camera_feed()
         st.markdown("</div>", unsafe_allow_html=True)
 
-def capture_image():
+def display_camera_feed():
     cap = cv2.VideoCapture(0)
-    stframe = st.empty()
 
-    while True:
+    if not cap.isOpened():
+        st.error("Unable to open the camera.")
+        return
+
+    stframe = st.empty()
+    capture_button = st.button("Capture", key="capture_image")
+    stop_button = st.button("Stop Camera", key="stop_camera_feed")
+
+    while st.session_state.get("camera_running", False) and cap.isOpened():
         ret, frame = cap.read()
         if not ret:
-            st.write("Failed to capture image")
+            st.error("Failed to capture image. Exiting...")
             break
-        
+
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         stframe.image(frame, channels="RGB", use_column_width=True)
-        if st.button("Capture"):
-            img = frame
+
+        if capture_button:
+            st.session_state["captured_image"] = frame
+            st.session_state["camera_running"] = False
             cap.release()
-            st.image(img, caption='Captured Image', use_column_width=True)
-            st.write("Classifying...")
-            with st.spinner('Processing...'):
-                time.sleep(2)  # Simulate a delay for processing
-                result = predict_image(img)  # Call your model prediction function here
-                st.write(f"Result: {result}")
             break
+
+        if stop_button:
+            st.session_state["camera_running"] = False
+            cap.release()
+            break
+
+    cap.release()
+
+    if "captured_image" in st.session_state:
+        img = st.session_state["captured_image"]
+        st.image(img, caption='Captured Image', use_column_width=True)
+        st.write("Classifying...")
+        with st.spinner('Processing...'):
+            time.sleep(2)  # Simulate a delay for processing
+            result, probability = predict_image(img)
+            st.write(f"Result: {result}")
+            st.write(f"Probability: {probability:.2f}")
+
+            # Generate and display detailed report
+            st.subheader("Detailed Analysis Report:")
+            if result == "Malignant":
+                st.write("The lesion shows signs of malignancy. Please consult a dermatologist.")
+                st.write("Probability of malignancy: {:.2f}".format(probability))
+            else:
+                st.write("The lesion appears benign. Regular monitoring is recommended.")
+                st.write("Probability of malignancy: {:.2f}".format(probability))
+
+# def capture_image():
+#     cap = cv2.VideoCapture(0)
+#     stframe = st.empty()
+
+#     while True:
+#         ret, frame = cap.read()
+#         if not ret:
+#             st.write("Failed to capture image")
+#             break
+        
+#         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+#         stframe.image(frame, channels="RGB", use_column_width=True)
+#         if st.button("Capture"):
+#             img = frame
+#             cap.release()
+#             st.image(img, caption='Captured Image', use_column_width=True)
+#             st.write("Classifying...")
+#             with st.spinner('Processing...'):
+#                 time.sleep(2)  # Simulate a delay for processing
+#                 result = predict_image(img)  # Call your model prediction function here
+#                 st.write(f"Result: {result}")
+#             break

@@ -1,0 +1,4 @@
+myenv/
+__pycache__/
+skindet-963bb-de14d3d13811.json
+model.h5
