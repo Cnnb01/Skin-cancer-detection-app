@@ -1,9 +1,4 @@
---windows os most likely preferred to run application
-python -m venv myenv(to create virtual environment)
-myenv\Scripts\activate(to activate virtual environment)
-deactivate(to move out of/deactivate virtual environment)
-pip install streamlit
-pip install opencv-python-headless
-pip install tensorflow
-pip install firebase-admin
-# streamlit run main.py
+streamlit
+opencv-python-headless
+tensorflow
+firebase-admin
