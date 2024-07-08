@@ -165,5 +165,5 @@ def display_camera_feed():
                 st.write("The lesion shows signs of malignancy. Please consult a dermatologist.")
                 st.write("Probability of malignancy: {:.2f}".format(probability))
             else:
-                st.write("The lesion appears benign. Regular monitoring is recommended.")
-                st.write("Probability of malignancy: {:.2f}".format(probability))
+                st.write("Good news! The lesion appears benign however regular monitoring is still recommended.")
+                st.write("Probability of lession being benign: {:.2f}".format(probability))
