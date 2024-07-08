@@ -151,11 +151,12 @@ def display_camera_feed():
 
     if "captured_image" in st.session_state:
         img = st.session_state["captured_image"]
-        st.image(img, caption='Captured Image', use_column_width=True)
+        img_pil = Image.fromarray(img)  # Convert to PIL Image
+        st.image(img_pil, caption='Captured Image', use_column_width=True)
         st.write("Classifying...")
         with st.spinner('Processing...'):
             time.sleep(2)  # Simulate a delay for processing
-            result, probability = predict_image(img)
+            result, probability = predict_image(img_pil)
             st.write(f"Result: {result}")
             st.write(f"Probability: {probability:.2f}")
 
@@ -167,26 +168,3 @@ def display_camera_feed():
             else:
                 st.write("The lesion appears benign. Regular monitoring is recommended.")
                 st.write("Probability of malignancy: {:.2f}".format(probability))
-
-# def capture_image():
-#     cap = cv2.VideoCapture(0)
-#     stframe = st.empty()
-
-#     while True:
-#         ret, frame = cap.read()
-#         if not ret:
-#             st.write("Failed to capture image")
-#             break
-        
-#         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-#         stframe.image(frame, channels="RGB", use_column_width=True)
-#         if st.button("Capture"):
-#             img = frame
-#             cap.release()
-#             st.image(img, caption='Captured Image', use_column_width=True)
-#             st.write("Classifying...")
-#             with st.spinner('Processing...'):
-#                 time.sleep(2)  # Simulate a delay for processing
-#                 result = predict_image(img)  # Call your model prediction function here
-#                 st.write(f"Result: {result}")
-#             break

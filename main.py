@@ -29,5 +29,5 @@ app.add_app("Home", home.app)
 app.add_app("Signup", signup.app)
 
 app.run()
-# streamlit run main.py
+
 #https://www.kaggle.com/datasets/hasinisadunikasilva/skincancerdetectiondcnn/data
